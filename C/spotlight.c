@@ -1,6 +1,13 @@
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 
+/**
+ * Program to simulate the spotlight search feature on mac
+ * but using C instead cos why not 
+ * 
+ * 31/07/2026
+ */
+
 typedef struct {
     GtkWidget *window;
     GtkWidget *entry;
@@ -44,7 +51,7 @@ static void launch_application(GtkListBox *box,
         return;
     }
 
-    gtk_widget_hide(launcher->window);
+    gtk_widget_destroy(launcher->window);
 }
 
 static void update_results(GtkEntry *entry, gpointer user_data)
