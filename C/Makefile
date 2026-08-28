@@ -5,7 +5,7 @@ GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-3.0 gio-2.0)
 
 TARGET = spotlight
 
-SRC = main.c launcher.c
+SRC = main.c launcher.c search.c
 
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(GTK_FLAGS)
