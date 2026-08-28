@@ -1,12 +1,19 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
+
+CFLAGS = -Wall -Wextra -std=c17
 GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-3.0 gio-2.0)
 
-spotlight: spotlight.c
-	$(CC) $(CFLAGS) spotlight.c -o spotlight $(GTK_FLAGS)
+TARGET = spotlight
 
-run: spotlight
-	./spotlight
+SRC = main.c launcher.c
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(GTK_FLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
 
 clean:
-	rm -f spotlight
+	rm -f $(TARGET)
+
+.PHONY: run clean
