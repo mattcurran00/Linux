@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include <gio/gio.h>
-#include "launcher.h"
+#include "launcher/launcher.h"
 
 /**
  * Program to simulate the spotlight search feature on mac
