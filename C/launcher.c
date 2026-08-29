@@ -1,4 +1,7 @@
 #include "launcher.h"
+#include "gio/gio.h"
+#include "search.h"
+#include "globals.h"
 #include "glib.h"
 #include "gtk/gtk.h"
 #include <string.h>
@@ -31,45 +34,23 @@ static void launch_application(GtkListBox *box, GtkListBoxRow *row, gpointer use
 }
 
 static void update_results(GtkEntry *entry, gpointer user_data){
+    
     Launcher *launcher = user_data;
 
     const char *query = gtk_entry_get_text(entry);
     clear_results(launcher);
     
+    GList *results = search_applications(launcher->applications, query);
     if (query == NULL || *query == '\0') {
         return;
     }
 
-    int result_count = 0;
+    for (GList *item = results; item != NULL; item = item->next) {
 
-    for (GList *item = launcher->applications;
-         item != NULL && result_count < 10;
-         item = item->next) {
-
-        GAppInfo *app = G_APP_INFO(item->data);
-
-        if (!g_app_info_should_show(app)) {
-            continue;
-        }
+        SearchResult *result= item->data;
+        GAppInfo *app = result->info;
 
         const char *name = g_app_info_get_display_name(app);
-
-        if (name == NULL) {
-            continue;
-        }
-
-        char *lower_name = g_utf8_strdown(name, -1);
-        char *lower_query = g_utf8_strdown(query, -1);
-
-        gboolean matches =
-            strstr(lower_name, lower_query) != NULL;
-
-        g_free(lower_name);
-        g_free(lower_query);
-
-        if (!matches) {
-            continue;
-        }
 
         GtkWidget *label = gtk_label_new(name);
 
@@ -101,9 +82,8 @@ static void update_results(GtkEntry *entry, gpointer user_data){
             GTK_CONTAINER(launcher->list_box),
             row
         );
-
-        result_count++;
     }
+    g_list_free_full(results, (GDestroyNotify)freeSearchResult);
 
     gtk_widget_show_all(launcher->list_box);
 }
@@ -148,8 +128,6 @@ static gboolean handle_key_press(GtkWidget *widget, GdkEventKey *event, gpointer
 
 void launcher_activate(GtkApplication *app, gpointer user_data)
 {
-    (void)user_data;
-
     Launcher *launcher = g_new0(Launcher, 1);
 
     launcher->applications = g_app_info_get_all();
@@ -250,4 +228,8 @@ void launcher_activate(GtkApplication *app, gpointer user_data)
     gtk_widget_show_all(launcher->window);
 
     gtk_widget_grab_focus(launcher->entry);
+}
+void freeSearchResult(SearchResult *result){
+    g_object_unref(result->info);
+    g_free(result);
 }

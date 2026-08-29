@@ -3,6 +3,7 @@
 
 #include <gtk/gtk.h>
 #include <gio/gio.h>
+#include "globals.h"
 
 typedef struct{
     GtkWidget *window;
@@ -12,5 +13,7 @@ typedef struct{
 }Launcher;
 
 void launcher_activate(GtkApplication *app, gpointer userData);
+
+void freeSearchResult(SearchResult *result);
 
 #endif
