@@ -86,4 +86,4 @@ int compareResults(gconstpointer a, gconstpointer b){
     const SearchResult *resultB = b;
 
     return resultB->score - resultA->score;
-}
+} //susie was here
